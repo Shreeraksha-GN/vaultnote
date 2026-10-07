@@ -25,6 +25,7 @@ public class JwtService {
         this.signingKey = Keys.hmacShaKeyFor(SECRET_KEY.getBytes(StandardCharsets.UTF_8));
     }
 
+    // Generates a JWT token for the given email
     public String generateToken(String email){
         Map<String, Object> claims = new HashMap();
         return Jwts.builder()

@@ -54,6 +54,7 @@ public class UserService {
             throw new RuntimeException("Invalid email or password!");
         }
 
+        //navigate to generate JWT token for the authenticated user
         return jwtService.generateToken(user.getEmail());
     }
 
