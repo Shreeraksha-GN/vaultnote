@@ -1,3 +1,5 @@
+package com.vaultnote.api.repository;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import com.vaultnote.api.model.User;
 import java.util.UUID;
