@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
+import com.vaultnote.api.service.JwtService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,10 +20,12 @@ import com.vaultnote.api.service.UserService;
 public class AuthController {
 
     private final UserService userService;
+    private final JwtService jwtService;
 
     //Dependency Injection via constructor
-    public AuthController(UserService userService){
+    public AuthController(UserService userService, JwtService jwtService){
         this.userService = userService;
+        this.jwtService = jwtService;
     }
 
     //1.Register Endpoint: Handles account registration/creation request
@@ -51,7 +54,23 @@ public class AuthController {
     //2. Login Endpoint: Checks credentials & issues JWT Token
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequestDto request){
-        // Implement login logic here
+        
+        try{
+            //Authenticate user and obtain token
+            String jwtToken = userService.loginUser(request.getEmail(), request.getPassword(), jwtService);
+
+            //Pack the token into tidy JSON object to send back
+            Map<String, String> response = new HashMap<>();
+            response.put("token", jwtToken);
+
+            return ResponseEntity.ok(response);
+
+        } catch(RuntimeException e){
+            //Invalid credentials? Return HTTP 401 Unauthorized
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("error", e.getMessage());
+            return ResponseEntity.status(401).body(errorResponse);
+        }
     }
 
     
